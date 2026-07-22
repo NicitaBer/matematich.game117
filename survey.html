@@ -1,0 +1,1278 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Опросник | Батлы</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background: linear-gradient(145deg, #1a1a2e 0%, #0f0f1a 100%);
+            font-family: 'Courier New', monospace;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            position: relative;
+        }
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" opacity="0.05"><path fill="none" stroke="%23d4af37" stroke-width="0.5" d="M20 20 L180 20 M20 40 L180 40 M20 60 L180 60 M20 80 L180 80 M20 100 L180 100 M20 120 L180 120 M20 140 L180 140 M20 160 L180 160 M20 180 L180 180 M40 20 L40 180 M60 20 L60 180 M80 20 L80 180 M100 20 L100 180 M120 20 L120 180 M140 20 L140 180 M160 20 L160 180"/><circle cx="100" cy="100" r="15" stroke="%23d4af37" stroke-width="0.5" fill="none"/><path d="M100 85 L100 115 M85 100 L115 100" stroke="%23d4af37" stroke-width="0.5"/></svg>');
+            background-repeat: repeat;
+            pointer-events: none;
+        }
+
+        .container {
+            background: #2c2418;
+            background-image: radial-gradient(circle at 25% 40%, rgba(80,70,50,0.3) 2%, transparent 2.5%);
+            background-size: 24px 24px;
+            border-radius: 32px;
+            box-shadow: 0 25px 35px rgba(0,0,0,0.5);
+            border: 1px solid #b89a6b;
+            padding: 30px 20px 35px;
+            max-width: 750px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .crime-header {
+            border-bottom: 2px solid #c7a25b;
+            padding-bottom: 18px;
+            margin-bottom: 28px;
+        }
+        .crime-header h1 {
+            font-family: 'Courier New', monospace;
+            font-weight: 700;
+            font-size: 1.7rem;
+            letter-spacing: 2px;
+            color: #ecd9b4;
+            text-shadow: 3px 3px 0 #2a2418;
+        }
+
+        .form-group {
+            text-align: left;
+            margin-bottom: 22px;
+        }
+        label {
+            display: block;
+            color: #bda36b;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 6px;
+            font-weight: bold;
+        }
+        .required {
+            color: #e74c3c;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 12px 16px;
+            background: #1f1b14;
+            border: 1px solid #5f4e32;
+            border-radius: 12px;
+            color: #eedbba;
+            font-family: 'Courier New', monospace;
+            font-size: 1rem;
+            font-weight: bold;
+            transition: 0.2s;
+        }
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: #c7a25b;
+            box-shadow: 0 0 0 3px rgba(199, 162, 91, 0.2);
+        }
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .rating-group {
+            margin-top: 6px;
+            padding: 6px 0;
+        }
+        .rating-group .criteria {
+            color: #dbbc87;
+            font-size: 1rem;
+            margin-bottom: 4px;
+            font-weight: bold;
+        }
+        .stars {
+            display: flex;
+            gap: 6px;
+            flex-direction: row-reverse;
+            justify-content: flex-end;
+        }
+        .stars input {
+            display: none;
+        }
+        .stars label {
+            font-size: 2.2rem;
+            color: #4a3f30;
+            cursor: pointer;
+            transition: 0.2s;
+            text-transform: none;
+            letter-spacing: 0;
+            margin-bottom: 0;
+            line-height: 1;
+            user-select: none;
+        }
+        .stars label::before {
+            content: "★";
+        }
+        .stars label:hover,
+        .stars label:hover ~ label,
+        .stars input:checked ~ label {
+            color: #f3d06b;
+            text-shadow: 0 0 12px rgba(243, 208, 107, 0.3);
+        }
+        .stars input:checked ~ label {
+            color: #f3d06b;
+        }
+
+        .sub-hint {
+            color: #5f4e32;
+            font-size: 0.75rem;
+            margin-top: 2px;
+            font-style: italic;
+            font-weight: bold;
+        }
+
+        .btn-row {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin: 10px 0 0;
+        }
+        .btn {
+            background: #221f1a;
+            background-image: linear-gradient(145deg, #2b241c, #19150f);
+            border: 1px solid #c7a25b;
+            border-radius: 40px;
+            padding: 14px 28px;
+            cursor: pointer;
+            box-shadow: 0 6px 0 #0c0a07;
+            transition: 0.1s;
+            color: #eedbba;
+            font-weight: bold;
+            font-size: 1rem;
+            font-family: 'Courier New', monospace;
+            flex: 1;
+            min-width: 120px;
+        }
+        .btn:active { transform: translateY(3px); box-shadow: 0 3px 0 #0c0a07; }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: 0 6px 0 #0c0a07; }
+
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            backdrop-filter: blur(4px);
+        }
+        .modal-overlay.active {
+            display: flex;
+        }
+        .modal-box {
+            background: #2c2418;
+            border: 2px solid #d4af37;
+            border-radius: 32px;
+            padding: 40px 30px 35px;
+            max-width: 450px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 0 60px rgba(212, 175, 55, 0.15);
+            animation: modalFade 0.3s ease;
+            position: relative;
+        }
+        @keyframes modalFade {
+            from { transform: scale(0.9); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+        .modal-box .modal-icon {
+            font-size: 3.5rem;
+            margin-bottom: 10px;
+        }
+        .modal-box .modal-title {
+            color: #f5e6b0;
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+        .modal-box .modal-message {
+            color: #dbbc87;
+            font-size: 1rem;
+            font-weight: bold;
+            line-height: 1.5;
+        }
+        .modal-box .modal-btn {
+            margin-top: 18px;
+            background: #221f1a;
+            background-image: linear-gradient(145deg, #2b241c, #19150f);
+            border: 1px solid #c7a25b;
+            border-radius: 40px;
+            padding: 12px 40px;
+            cursor: pointer;
+            box-shadow: 0 6px 0 #0c0a07;
+            transition: 0.1s;
+            color: #eedbba;
+            font-weight: bold;
+            font-size: 1rem;
+            font-family: 'Courier New', monospace;
+            display: inline-block;
+        }
+        .modal-box .modal-btn:active { transform: translateY(3px); box-shadow: 0 3px 0 #0c0a07; }
+        .modal-box .modal-btn:hover {
+            background: #3a2f1a;
+            border-color: #d4af37;
+        }
+        .modal-box.error {
+            border-color: #e88060;
+        }
+        .modal-box.success {
+            border-color: #7ad45a;
+        }
+        .modal-box.loading {
+            border-color: #f3d06b;
+        }
+        .modal-box.loading .modal-icon {
+            animation: spin 1.2s linear infinite;
+        }
+        .modal-box.loading .modal-btn {
+            display: none;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .hidden-page {
+            display: none;
+            max-width: 1050px;
+            width: 100%;
+            margin: 0 auto;
+        }
+        .hidden-page.active {
+            display: block;
+        }
+
+        .hidden-page .stats {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            padding: 14px 0;
+            border-top: 2px solid #d4af37;
+            border-bottom: 2px solid #d4af37;
+            margin: 16px 0;
+            color: #f5e6b0;
+            font-size: 0.95rem;
+            font-weight: bold;
+        }
+        .hidden-page .stats-actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .table-wrap {
+            margin-top: 16px;
+            overflow-x: auto;
+            border-radius: 16px;
+            border: 2px solid #d4af37;
+            background: #0f0c08;
+            box-shadow: 0 0 30px rgba(212, 175, 55, 0.1);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+        }
+        th {
+            background: linear-gradient(145deg, #2a1f12, #1a1008);
+            color: #f5e6b0;
+            padding: 12px 12px;
+            text-align: left;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            border-bottom: 2px solid #d4af37;
+            white-space: nowrap;
+            font-weight: bold;
+            text-shadow: 0 0 10px rgba(212, 175, 55, 0.2);
+        }
+        td {
+            padding: 10px 12px;
+            border-bottom: 2px solid #3a3020;
+            color: #ecd9b4;
+            word-break: break-word;
+            font-weight: bold;
+        }
+        tr:hover td {
+            background: #1f1b14;
+            box-shadow: inset 0 0 30px rgba(212, 175, 55, 0.05);
+        }
+        tr:last-child td {
+            border-bottom: none;
+        }
+        .empty-row td {
+            text-align: center;
+            color: #5f4e32;
+            padding: 40px 0;
+            font-size: 1.1rem;
+            font-weight: normal;
+        }
+
+        .nav-links {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 20px;
+            align-items: center;
+        }
+
+        .back-link {
+            color: #bda36b;
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: bold;
+            border-bottom: 1px dashed #bda36b;
+            padding-bottom: 2px;
+            cursor: pointer;
+            transition: 0.2s;
+            display: inline-block;
+        }
+        .back-link:hover {
+            color: #f5e6b0;
+            border-color: #f5e6b0;
+        }
+
+        .home-link {
+            color: #7f6b48;
+            text-decoration: none;
+            font-size: 0.8rem;
+            font-weight: bold;
+            border-bottom: 1px dashed #5f4e32;
+            padding-bottom: 2px;
+            cursor: pointer;
+            transition: 0.2s;
+            display: inline-block;
+        }
+        .home-link:hover {
+            color: #bda36b;
+            border-color: #bda36b;
+        }
+
+        td:first-child {
+            color: #d4af37;
+            font-weight: bold;
+        }
+
+        .stats-average {
+            margin-top: 20px;
+            padding: 16px 20px;
+            border: 2px solid #d4af37;
+            border-radius: 16px;
+            background: linear-gradient(145deg, #1f1b14, #0f0c08);
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 12px;
+            text-align: center;
+        }
+        .stats-average .item {
+            color: #bda36b;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: bold;
+        }
+        .stats-average .value {
+            font-size: 1.6rem;
+            font-weight: bold;
+            display: block;
+            margin-top: 2px;
+        }
+        .stats-average .value.good { color: #7ad45a; }
+        .stats-average .value.ok { color: #f3d06b; }
+        .stats-average .value.bad { color: #e88060; }
+
+        .admin-nav {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            margin: 16px 0;
+            flex-wrap: wrap;
+        }
+        .admin-nav .btn-nav {
+            padding: 8px 24px;
+            border: 1px solid #d4af37;
+            border-radius: 40px;
+            background: #1f1b14;
+            color: #f5e6b0;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            font-size: 0.85rem;
+            transition: 0.2s;
+        }
+        .admin-nav .btn-nav:hover {
+            background: #d4af37;
+            color: #1a1a2e;
+        }
+        .admin-nav .btn-nav.active {
+            background: #d4af37;
+            color: #1a1a2e;
+        }
+
+        .btn-sm {
+            padding: 6px 16px;
+            font-size: 0.75rem;
+            border-radius: 40px;
+            border: 1px solid #d4af37;
+            background: #1f1b14;
+            color: #f5e6b0;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+            transition: 0.2s;
+            font-weight: bold;
+        }
+        .btn-sm:hover {
+            background: #d4af37;
+            color: #1a1a2e;
+            border-color: #d4af37;
+        }
+
+        .badge {
+            display: inline-block;
+            border-radius: 40px;
+            padding: 2px 14px;
+            font-size: 0.8rem;
+            white-space: nowrap;
+            font-weight: bold;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+        }
+        .badge-1 { background: rgba(180, 40, 40, 0.35); color: #ffbbbb; border: 1px solid rgba(200, 60, 60, 0.25); }
+        .badge-2 { background: rgba(200, 120, 40, 0.32); color: #ffddbb; border: 1px solid rgba(200, 140, 60, 0.25); }
+        .badge-3 { background: rgba(200, 180, 40, 0.30); color: #ffeeaa; border: 1px solid rgba(200, 190, 60, 0.25); }
+        .badge-4 { background: rgba(60, 180, 100, 0.32); color: #bbffcc; border: 1px solid rgba(80, 200, 120, 0.25); }
+        .badge-5 { background: rgba(40, 220, 80, 0.35); color: #bbffbb; border: 1px solid rgba(60, 240, 100, 0.25); }
+
+        .badge-archived {
+            background: rgba(60, 60, 60, 0.2);
+            color: #8a8a8a;
+            border: 1px solid rgba(80, 80, 80, 0.2);
+        }
+
+        .comment-card {
+            background: #1f1b14;
+            border: 1px solid #5f4e32;
+            border-radius: 12px;
+            padding: 14px 18px;
+            margin-bottom: 12px;
+            text-align: left;
+            transition: 0.2s;
+        }
+        .comment-card:hover {
+            border-color: #d4af37;
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.1);
+        }
+        .comment-card .team-name {
+            color: #f5e6b0;
+            font-weight: bold;
+            font-size: 1rem;
+        }
+        .comment-card .comment-text {
+            color: #ecd9b4;
+            margin: 6px 0 8px 0;
+            font-size: 0.95rem;
+            font-weight: bold;
+            line-height: 1.5;
+        }
+        .comment-card .comment-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .comment-card .comment-date {
+            color: #5f4e32;
+            font-size: 0.7rem;
+            font-weight: bold;
+        }
+        .comment-card .btn-copy {
+            padding: 4px 14px;
+            font-size: 0.7rem;
+            border-radius: 40px;
+            border: 1px solid #5f4e32;
+            background: #1f1b14;
+            color: #bda36b;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            transition: 0.2s;
+        }
+        .comment-card .btn-copy:hover {
+            border-color: #d4af37;
+            color: #f5e6b0;
+            background: #2a1f12;
+        }
+        .comment-card .btn-copy.copied {
+            border-color: #7ad45a;
+            color: #7ad45a;
+        }
+        .no-comments {
+            color: #5f4e32;
+            text-align: center;
+            padding: 40px 0;
+            font-size: 1.1rem;
+            font-weight: bold;
+        }
+
+        tr.archived td {
+            opacity: 0.6;
+            color: #8a7a5a;
+        }
+        tr.archived td .badge {
+            opacity: 0.7;
+        }
+
+        .archive-comments-section {
+            margin-top: 20px;
+            border-top: 2px solid #5f4e32;
+            padding-top: 16px;
+        }
+
+        @media (max-width: 600px) {
+            .container { padding: 16px; }
+            .btn { min-width: 100%; }
+            .btn-row { flex-direction: column; }
+            .stars label { font-size: 1.8rem; }
+            .hidden-page .stats { flex-direction: column; gap: 10px; }
+            th, td { padding: 6px 8px; font-size: 0.7rem; }
+            .stats-average { grid-template-columns: repeat(3, 1fr); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal-box" id="modalBox">
+            <div class="modal-icon" id="modalIcon">✅</div>
+            <div class="modal-title" id="modalTitle">УСПЕШНО!</div>
+            <div class="modal-message" id="modalMessage">Ответ отправлен!</div>
+            <button class="modal-btn" id="modalBtn">ПОНЯТНО</button>
+        </div>
+    </div>
+
+    <div class="container" id="mainPage">
+        <div class="crime-header">
+            <h1>📋 ОПРОСНИК</h1>
+        </div>
+
+        <form id="surveyForm" autocomplete="off">
+            <div class="form-group">
+                <label>Введите название команды <span class="required">*</span></label>
+                <input type="text" id="teamName" placeholder="Название команды" required>
+            </div>
+
+            <div class="form-group">
+                <label>Оцените, пожалуйста <span class="required">*</span></label>
+
+                <div class="rating-group">
+                    <div class="criteria">Работа кураторов</div>
+                    <div class="stars" data-criteria="curators">
+                        <input type="radio" name="curators" id="curators5" value="5">
+                        <label for="curators5"></label>
+                        <input type="radio" name="curators" id="curators4" value="4">
+                        <label for="curators4"></label>
+                        <input type="radio" name="curators" id="curators3" value="3">
+                        <label for="curators3"></label>
+                        <input type="radio" name="curators" id="curators2" value="2">
+                        <label for="curators2"></label>
+                        <input type="radio" name="curators" id="curators1" value="1">
+                        <label for="curators1"></label>
+                    </div>
+                </div>
+
+                <div class="rating-group">
+                    <div class="criteria">Работа ведущего</div>
+                    <div class="stars" data-criteria="host">
+                        <input type="radio" name="host" id="host5" value="5">
+                        <label for="host5"></label>
+                        <input type="radio" name="host" id="host4" value="4">
+                        <label for="host4"></label>
+                        <input type="radio" name="host" id="host3" value="3">
+                        <label for="host3"></label>
+                        <input type="radio" name="host" id="host2" value="2">
+                        <label for="host2"></label>
+                        <input type="radio" name="host" id="host1" value="1">
+                        <label for="host1"></label>
+                    </div>
+                </div>
+
+                <div class="rating-group">
+                    <div class="criteria">Формат турнира</div>
+                    <div class="stars" data-criteria="format">
+                        <input type="radio" name="format" id="format5" value="5">
+                        <label for="format5"></label>
+                        <input type="radio" name="format" id="format4" value="4">
+                        <label for="format4"></label>
+                        <input type="radio" name="format" id="format3" value="3">
+                        <label for="format3"></label>
+                        <input type="radio" name="format" id="format2" value="2">
+                        <label for="format2"></label>
+                        <input type="radio" name="format" id="format1" value="1">
+                        <label for="format1"></label>
+                    </div>
+                </div>
+
+                <div class="rating-group">
+                    <div class="criteria">Задачи</div>
+                    <div class="stars" data-criteria="tasks">
+                        <input type="radio" name="tasks" id="tasks5" value="5">
+                        <label for="tasks5"></label>
+                        <input type="radio" name="tasks" id="tasks4" value="4">
+                        <label for="tasks4"></label>
+                        <input type="radio" name="tasks" id="tasks3" value="3">
+                        <label for="tasks3"></label>
+                        <input type="radio" name="tasks" id="tasks2" value="2">
+                        <label for="tasks2"></label>
+                        <input type="radio" name="tasks" id="tasks1" value="1">
+                        <label for="tasks1"></label>
+                    </div>
+                </div>
+
+                <div class="rating-group">
+                    <div class="criteria">Ваш интерес на протяжении игры</div>
+                    <div class="stars" data-criteria="interest">
+                        <input type="radio" name="interest" id="interest5" value="5">
+                        <label for="interest5"></label>
+                        <input type="radio" name="interest" id="interest4" value="4">
+                        <label for="interest4"></label>
+                        <input type="radio" name="interest" id="interest3" value="3">
+                        <label for="interest3"></label>
+                        <input type="radio" name="interest" id="interest2" value="2">
+                        <label for="interest2"></label>
+                        <input type="radio" name="interest" id="interest1" value="1">
+                        <label for="interest1"></label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Оставьте, пожалуйста, ваш комментарий</label>
+                <div class="sub-hint">Можете оставить слова благодарности организаторам или своему куратору, поделиться своими впечатлениями, предложить свою идею</div>
+                <textarea id="comment" placeholder="Ваш текст..."></textarea>
+            </div>
+
+            <div class="btn-row">
+                <button type="submit" class="btn">💾 ОТПРАВИТЬ</button>
+            </div>
+        </form>
+    </div>
+
+    <div class="container hidden-page" id="adminPage">
+        <div class="crime-header">
+            <h1>📊 АДМИН-ПАНЕЛЬ</h1>
+        </div>
+
+        <div class="admin-nav">
+            <button class="btn-nav active" id="navTable" onclick="showAdminTab('table')">📊 АКТИВНЫЕ</button>
+            <button class="btn-nav" id="navArchive" onclick="showAdminTab('archive')">📦 АРХИВ</button>
+            <button class="btn-nav" id="navComments" onclick="showAdminTab('comments')">💬 КОММЕНТАРИИ</button>
+        </div>
+
+        <div id="adminTableTab">
+            <div class="stats">
+                <span>📌 ВСЕГО ОТВЕТОВ: <strong id="countDisplay">0</strong></span>
+                <div class="stats-actions">
+                    <button class="btn-sm" id="exportCsvBtn">📥 СКАЧАТЬ CSV</button>
+                    <button class="btn-sm" id="refreshBtn">🔄 ОБНОВИТЬ</button>
+                </div>
+            </div>
+
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Команда</th>
+                            <th>Кураторы</th>
+                            <th>Ведущий</th>
+                            <th>Формат</th>
+                            <th>Задачи</th>
+                            <th>Интерес</th>
+                            <th>Дата</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                        <tr class="empty-row"><td colspan="8">Загрузка данных...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="stats-average" id="averageStats">
+                <div class="item">Кураторы <span class="value" id="avgCurators">—</span></div>
+                <div class="item">Ведущий <span class="value" id="avgHost">—</span></div>
+                <div class="item">Формат <span class="value" id="avgFormat">—</span></div>
+                <div class="item">Задачи <span class="value" id="avgTasks">—</span></div>
+                <div class="item">Интерес <span class="value" id="avgInterest">—</span></div>
+            </div>
+        </div>
+
+        <div id="adminArchiveTab" style="display:none;">
+            <div class="stats" style="border-bottom: 2px solid #d4af37; margin-bottom: 16px;">
+                <span>📦 В АРХИВЕ: <strong id="archiveCount">0</strong></span>
+                <div class="stats-actions">
+                    <button class="btn-sm" id="refreshArchiveBtn">🔄 ОБНОВИТЬ</button>
+                </div>
+            </div>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Команда</th>
+                            <th>Кураторы</th>
+                            <th>Ведущий</th>
+                            <th>Формат</th>
+                            <th>Задачи</th>
+                            <th>Интерес</th>
+                            <th>Дата</th>
+                        </tr>
+                    </thead>
+                    <tbody id="archiveBody">
+                        <tr class="empty-row"><td colspan="8">Архив пуст</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="stats-average" id="archiveAverageStats">
+                <div class="item">Кураторы <span class="value" id="avgArchCurators">—</span></div>
+                <div class="item">Ведущий <span class="value" id="avgArchHost">—</span></div>
+                <div class="item">Формат <span class="value" id="avgArchFormat">—</span></div>
+                <div class="item">Задачи <span class="value" id="avgArchTasks">—</span></div>
+                <div class="item">Интерес <span class="value" id="avgArchInterest">—</span></div>
+            </div>
+
+            <div class="archive-comments-section">
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; margin-bottom: 12px;">
+                    <span style="color: #bda36b; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; font-weight: bold;">💬 АРХИВИРОВАННЫЕ КОММЕНТАРИИ</span>
+                    <span style="color: #5f4e32; font-size: 0.7rem; font-weight: bold;" id="archiveCommentsCount">0</span>
+                </div>
+                <div id="archiveCommentsList"></div>
+            </div>
+        </div>
+
+        <div id="adminCommentsTab" style="display:none;">
+            <div class="stats" style="border-bottom: 2px solid #d4af37; margin-bottom: 16px;">
+                <span>💬 КОММЕНТАРИЕВ: <strong id="commentsCount">0</strong></span>
+            </div>
+            <div id="commentsList"></div>
+        </div>
+
+        <div class="nav-links">
+            <div class="back-link" onclick="showMainPage()">← ВЕРНУТЬСЯ К ОПРОСНИКУ</div>
+            <div class="home-link" onclick="goHome()">🏠 НА ГЛАВНУЮ</div>
+        </div>
+    </div>
+
+    <script>
+        // ===== НОВАЯ ССЫЛКА =====
+        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwHjNzwzldVVJN9JgEr6M_hB3fjhaBSH-CqqlR9w5SIuBZ3MYbNjKtXW_t6ZTZ26Vg19w/exec';
+
+        const mainPage = document.getElementById('mainPage');
+        const adminPage = document.getElementById('adminPage');
+
+        if (window.location.hash === '#admin') {
+            mainPage.style.display = 'none';
+            adminPage.classList.add('active');
+            loadAllData();
+        }
+
+        function showMainPage() {
+            window.location.hash = '';
+            mainPage.style.display = 'block';
+            adminPage.classList.remove('active');
+        }
+
+        function goHome() {
+            window.location.href = 'index.html';
+        }
+
+        window.addEventListener('hashchange', function() {
+            if (window.location.hash === '#admin') {
+                mainPage.style.display = 'none';
+                adminPage.classList.add('active');
+                loadAllData();
+            } else {
+                mainPage.style.display = 'block';
+                adminPage.classList.remove('active');
+            }
+        });
+
+        function showAdminTab(tab) {
+            const tabs = {
+                table: document.getElementById('adminTableTab'),
+                archive: document.getElementById('adminArchiveTab'),
+                comments: document.getElementById('adminCommentsTab')
+            };
+            const buttons = {
+                table: document.getElementById('navTable'),
+                archive: document.getElementById('navArchive'),
+                comments: document.getElementById('navComments')
+            };
+
+            Object.keys(tabs).forEach(key => {
+                tabs[key].style.display = key === tab ? 'block' : 'none';
+                buttons[key].classList.toggle('active', key === tab);
+            });
+
+            if (tab === 'comments') renderComments();
+        }
+
+        const modalOverlay = document.getElementById('modalOverlay');
+        const modalBox = document.getElementById('modalBox');
+        const modalIcon = document.getElementById('modalIcon');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalMessage = document.getElementById('modalMessage');
+        const modalBtn = document.getElementById('modalBtn');
+
+        function showModal(icon, title, message, isError = false, isLoader = false) {
+            modalIcon.textContent = icon;
+            modalTitle.textContent = title;
+            modalMessage.textContent = message;
+            if (isLoader) {
+                modalBox.className = 'modal-box loading';
+            } else {
+                modalBox.className = 'modal-box ' + (isError ? 'error' : 'success');
+            }
+            modalOverlay.className = 'modal-overlay active';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function hideModal() {
+            modalOverlay.classList.remove('active');
+        }
+
+        modalBtn.addEventListener('click', hideModal);
+        modalOverlay.addEventListener('click', function(e) {
+            if (e.target === modalOverlay && !modalBox.classList.contains('loading')) {
+                hideModal();
+            }
+        });
+
+        function getRating(name) {
+            const el = document.querySelector(`input[name="${name}"]:checked`);
+            return el ? el.value : null;
+        }
+
+        function checkAllRatings() {
+            const names = ['curators', 'host', 'format', 'tasks', 'interest'];
+            for (let name of names) {
+                const checked = document.querySelector(`input[name="${name}"]:checked`);
+                if (!checked) return false;
+            }
+            return true;
+        }
+
+        async function loadData(type = 'active') {
+            try {
+                const url = type === 'archive' 
+                    ? GOOGLE_SCRIPT_URL + '?type=archive'
+                    : GOOGLE_SCRIPT_URL;
+                const response = await fetch(url);
+                const data = await response.json();
+                return data || [];
+            } catch (error) {
+                console.error('Ошибка загрузки:', error);
+                return [];
+            }
+        }
+
+        async function loadAllData(showLoader = true) {
+            if (showLoader) {
+                showModal('⏳', 'ЗАГРУЗКА...', 'Пожалуйста, подождите', false, true);
+            }
+
+            try {
+                const [active, archive] = await Promise.all([
+                    loadData('active'),
+                    loadData('archive')
+                ]);
+                
+                window.activeData = active;
+                window.archiveData = archive;
+                
+                renderTable();
+                renderArchive();
+                renderComments();
+                renderArchiveComments();
+                updateAverages();
+                updateArchiveAverages();
+                document.getElementById('countDisplay').textContent = active.length;
+                document.getElementById('archiveCount').textContent = archive.length;
+
+                if (showLoader) {
+                    hideModal();
+                }
+
+            } catch (error) {
+                console.error('Ошибка загрузки:', error);
+                document.getElementById('tableBody').innerHTML = `<tr class="empty-row"><td colspan="8">Ошибка загрузки данных</td></tr>`;
+                document.getElementById('archiveBody').innerHTML = `<tr class="empty-row"><td colspan="8">Ошибка загрузки архива</td></tr>`;
+                if (showLoader) {
+                    hideModal();
+                    showModal('❌', 'ОШИБКА', 'Не удалось загрузить данные. Проверьте интернет.', true);
+                }
+            }
+        }
+
+        function renderTable() {
+            const data = window.activeData || [];
+            const tbody = document.getElementById('tableBody');
+
+            if (data.length === 0) {
+                tbody.innerHTML = `<tr class="empty-row"><td colspan="8">Нет данных</td></tr>`;
+                return;
+            }
+
+            let html = '';
+            data.forEach((row, index) => {
+                const team = row['Команда'] || row['team'] || '';
+                const curators = row['Кураторы'] || row['curators'] || '';
+                const host = row['Ведущий'] || row['host'] || '';
+                const format = row['Формат'] || row['format'] || '';
+                const tasks = row['Задачи'] || row['tasks'] || '';
+                const interest = row['Интерес'] || row['interest'] || '';
+                const date = row['Дата'] || row['date'] || '';
+
+                html += `
+                    <tr>
+                        <td>${index + 1}</td>
+                        <td><strong style="color:#f5e6b0;">${escapeHtml(team)}</strong></td>
+                        <td><span class="badge ${getBadgeClass(curators)}">${escapeHtml(curators) || '—'}</span></td>
+                        <td><span class="badge ${getBadgeClass(host)}">${escapeHtml(host) || '—'}</span></td>
+                        <td><span class="badge ${getBadgeClass(format)}">${escapeHtml(format) || '—'}</span></td>
+                        <td><span class="badge ${getBadgeClass(tasks)}">${escapeHtml(tasks) || '—'}</span></td>
+                        <td><span class="badge ${getBadgeClass(interest)}">${escapeHtml(interest) || '—'}</span></td>
+                        <td style="font-size:0.65rem; color:#8a7a5a;">${escapeHtml(date)}</td>
+                    </tr>
+                `;
+            });
+            tbody.innerHTML = html;
+        }
+
+        function renderArchive() {
+            const data = window.archiveData || [];
+            const tbody = document.getElementById('archiveBody');
+
+            if (data.length === 0) {
+                tbody.innerHTML = `<tr class="empty-row"><td colspan="8">Архив пуст</td></tr>`;
+                return;
+            }
+
+            let html = '';
+            data.forEach((row, index) => {
+                const team = row['Команда'] || row['team'] || '';
+                const curators = row['Кураторы'] || row['curators'] || '';
+                const host = row['Ведущий'] || row['host'] || '';
+                const format = row['Формат'] || row['format'] || '';
+                const tasks = row['Задачи'] || row['tasks'] || '';
+                const interest = row['Интерес'] || row['interest'] || '';
+                const date = row['Дата'] || row['date'] || '';
+
+                html += `
+                    <tr class="archived">
+                        <td>${index + 1}</td>
+                        <td><strong style="color:#8a7a5a;">${escapeHtml(team)}</strong></td>
+                        <td><span class="badge badge-archived">${escapeHtml(curators) || '—'}</span></td>
+                        <td><span class="badge badge-archived">${escapeHtml(host) || '—'}</span></td>
+                        <td><span class="badge badge-archived">${escapeHtml(format) || '—'}</span></td>
+                        <td><span class="badge badge-archived">${escapeHtml(tasks) || '—'}</span></td>
+                        <td><span class="badge badge-archived">${escapeHtml(interest) || '—'}</span></td>
+                        <td style="font-size:0.65rem; color:#5f4e32;">${escapeHtml(date)}</td>
+                    </tr>
+                `;
+            });
+            tbody.innerHTML = html;
+        }
+
+        function renderArchiveComments() {
+            const data = window.archiveData || [];
+            const container = document.getElementById('archiveCommentsList');
+            const countDisplay = document.getElementById('archiveCommentsCount');
+
+            const comments = data.filter(r => {
+                const comment = r['Комментарий'] || r['comment'] || '';
+                return comment.trim() !== '';
+            });
+            countDisplay.textContent = comments.length;
+
+            if (comments.length === 0) {
+                container.innerHTML = `<div class="no-comments">💬 Нет архивированных комментариев</div>`;
+                return;
+            }
+
+            let html = '';
+            comments.forEach((r) => {
+                const team = r['Команда'] || r['team'] || '';
+                const comment = r['Комментарий'] || r['comment'] || '';
+                const date = r['Дата'] || r['date'] || '';
+                html += `
+                    <div class="comment-card" style="opacity:0.6;">
+                        <div class="team-name">🏷️ ${escapeHtml(team)}</div>
+                        <div class="comment-text">${escapeHtml(comment)}</div>
+                        <div class="comment-meta">
+                            <span class="comment-date">${escapeHtml(date)}</span>
+                            <button class="btn-copy" onclick="copyComment(this, '${escapeJs(comment)}')">📋 КОПИРОВАТЬ</button>
+                        </div>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+        }
+
+        function renderComments() {
+            const data = window.activeData || [];
+            const container = document.getElementById('commentsList');
+            const countDisplay = document.getElementById('commentsCount');
+
+            const comments = data.filter(r => {
+                const comment = r['Комментарий'] || r['comment'] || '';
+                return comment.trim() !== '';
+            });
+            countDisplay.textContent = comments.length;
+
+            if (comments.length === 0) {
+                container.innerHTML = `<div class="no-comments">💬 Нет комментариев</div>`;
+                return;
+            }
+
+            let html = '';
+            comments.forEach((r) => {
+                const team = r['Команда'] || r['team'] || '';
+                const comment = r['Комментарий'] || r['comment'] || '';
+                const date = r['Дата'] || r['date'] || '';
+                html += `
+                    <div class="comment-card">
+                        <div class="team-name">🏷️ ${escapeHtml(team)}</div>
+                        <div class="comment-text">${escapeHtml(comment)}</div>
+                        <div class="comment-meta">
+                            <span class="comment-date">${escapeHtml(date)}</span>
+                            <button class="btn-copy" onclick="copyComment(this, '${escapeJs(comment)}')">📋 КОПИРОВАТЬ</button>
+                        </div>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+        }
+
+        document.getElementById('refreshBtn').addEventListener('click', function() {
+            loadAllData(true);
+        });
+        document.getElementById('refreshArchiveBtn').addEventListener('click', function() {
+            loadAllData(true);
+        });
+
+        function updateAverages() {
+            const data = window.activeData || [];
+            const criteria = ['curators', 'host', 'format', 'tasks', 'interest'];
+            const names = ['avgCurators', 'avgHost', 'avgFormat', 'avgTasks', 'avgInterest'];
+            const keys = ['Кураторы', 'Ведущий', 'Формат', 'Задачи', 'Интерес'];
+
+            keys.forEach((key, i) => {
+                const values = data
+                    .map(row => parseInt(row[key] || row[criteria[i]]))
+                    .filter(v => !isNaN(v) && v >= 1 && v <= 5);
+
+                const el = document.getElementById(names[i]);
+                if (values.length === 0) {
+                    el.textContent = '—';
+                    el.className = 'value';
+                } else {
+                    const avg = values.reduce((a, b) => a + b, 0) / values.length;
+                    el.textContent = avg.toFixed(1);
+                    el.className = 'value ' + (avg >= 4 ? 'good' : avg >= 2.5 ? 'ok' : 'bad');
+                }
+            });
+        }
+
+        function updateArchiveAverages() {
+            const data = window.archiveData || [];
+            const criteria = ['curators', 'host', 'format', 'tasks', 'interest'];
+            const names = ['avgArchCurators', 'avgArchHost', 'avgArchFormat', 'avgArchTasks', 'avgArchInterest'];
+            const keys = ['Кураторы', 'Ведущий', 'Формат', 'Задачи', 'Интерес'];
+
+            keys.forEach((key, i) => {
+                const values = data
+                    .map(row => parseInt(row[key] || row[criteria[i]]))
+                    .filter(v => !isNaN(v) && v >= 1 && v <= 5);
+
+                const el = document.getElementById(names[i]);
+                if (values.length === 0) {
+                    el.textContent = '—';
+                    el.className = 'value';
+                } else {
+                    const avg = values.reduce((a, b) => a + b, 0) / values.length;
+                    el.textContent = avg.toFixed(1);
+                    el.className = 'value ' + (avg >= 4 ? 'good' : avg >= 2.5 ? 'ok' : 'bad');
+                }
+            });
+        }
+
+        document.getElementById('exportCsvBtn').addEventListener('click', function() {
+            const data = window.activeData || [];
+            if (data.length === 0) return;
+            
+            let csv = '\uFEFF';
+            csv += '№,Команда,Кураторы,Ведущий,Формат,Задачи,Интерес,Дата\n';
+            data.forEach((r, i) => {
+                const team = r['Команда'] || r['team'] || '';
+                const curators = r['Кураторы'] || r['curators'] || '';
+                const host = r['Ведущий'] || r['host'] || '';
+                const format = r['Формат'] || r['format'] || '';
+                const tasks = r['Задачи'] || r['tasks'] || '';
+                const interest = r['Интерес'] || r['interest'] || '';
+                const date = r['Дата'] || r['date'] || '';
+                csv += `${i+1},"${team}",${curators},${host},${format},${tasks},${interest},"${date}"\n`;
+            });
+            
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `опрос_${new Date().toISOString().slice(0,10)}.csv`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(link.href);
+        });
+
+        window.copyComment = function(btn, text) {
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(text).then(() => {
+                    btn.textContent = '✅ СКОПИРОВАНО';
+                    btn.classList.add('copied');
+                    setTimeout(() => {
+                        btn.textContent = '📋 КОПИРОВАТЬ';
+                        btn.classList.remove('copied');
+                    }, 2000);
+                }).catch(() => fallbackCopy(btn, text));
+            } else {
+                fallbackCopy(btn, text);
+            }
+        };
+
+        function fallbackCopy(btn, text) {
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            textarea.style.position = 'fixed';
+            textarea.style.left = '-9999px';
+            document.body.appendChild(textarea);
+            textarea.select();
+            try {
+                document.execCommand('copy');
+                btn.textContent = '✅ СКОПИРОВАНО';
+                btn.classList.add('copied');
+                setTimeout(() => {
+                    btn.textContent = '📋 КОПИРОВАТЬ';
+                    btn.classList.remove('copied');
+                }, 2000);
+            } catch (e) {
+                alert('Не удалось скопировать.');
+            }
+            document.body.removeChild(textarea);
+        }
+
+        function escapeHtml(text) {
+            if (!text) return '';
+            const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
+            return String(text).replace(/[&<>"']/g, function(m) { return map[m]; });
+        }
+
+        function escapeJs(text) {
+            if (!text) return '';
+            return text.replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '\\"');
+        }
+
+        function getBadgeClass(value) {
+            const num = parseInt(value);
+            if (isNaN(num) || num < 1 || num > 5) return 'badge-1';
+            return 'badge-' + num;
+        }
+
+        function handleSubmit(e) {
+            e.preventDefault();
+
+            const team = document.getElementById('teamName').value.trim();
+
+            if (!team) {
+                showModal('⚠️', 'ОШИБКА', 'Пожалуйста, введите название команды', true);
+                document.getElementById('teamName').focus();
+                return;
+            }
+
+            if (!checkAllRatings()) {
+                showModal('⚠️', 'ОШИБКА', 'Пожалуйста, поставьте оценку по всем критериям', true);
+                return;
+            }
+
+            const curators = getRating('curators');
+            const host = getRating('host');
+            const format = getRating('format');
+            const tasks = getRating('tasks');
+            const interest = getRating('interest');
+            const comment = document.getElementById('comment').value.trim();
+
+            const data = { team, curators, host, format, tasks, interest, comment };
+
+            const btn = document.querySelector('.btn');
+            btn.textContent = '⏳ ОТПРАВКА...';
+            btn.disabled = true;
+
+            fetch(GOOGLE_SCRIPT_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: 'add', ...data })
+            })
+            .then(() => {
+                btn.textContent = '💾 ОТПРАВИТЬ';
+                btn.disabled = false;
+                document.getElementById('surveyForm').reset();
+                showModal('✅', 'УСПЕШНО!', 'Ответ отправлен!', false);
+                if (window.location.hash === '#admin') {
+                    setTimeout(() => loadAllData(false), 2000);
+                }
+            })
+            .catch(() => {
+                btn.textContent = '💾 ОТПРАВИТЬ';
+                btn.disabled = false;
+                showModal('❌', 'ОШИБКА', 'Не удалось отправить ответ. Проверьте интернет.', true);
+            });
+        }
+
+        document.getElementById('surveyForm').addEventListener('submit', handleSubmit);
+
+        if (window.location.hash === '#admin') {
+            loadAllData(false);
+        }
+    </script>
+</body>
+</html>
